@@ -8,7 +8,7 @@ const authMiddleware = (req, res, next) => {
     }
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-        req.playerId = decoded.playerId; // Almacena el ID del jugador en la solicitud para usarlo más tarde
+        req.user = decoded.playerId; // Almacena el ID del jugador en la solicitud para usarlo más tarde
         next();
     } catch (error) {
         res.status(401).send({ error: 'Token inválido.' });

@@ -1,18 +1,25 @@
 const express = require('express');
 const router = express.Router();
 const Player = require('../models/player');
-const authMiddleware = require('../middleware/auth');
+const auth = require('../middleware/auth');
 
-//ver mi perfil
-router.get('/me',authMiddleware, async (req, res) => {
-    try {
-        const player = await player.findById(req.playerId);
-        if (!player)
-            return res.status(404).send({ error: 'Jugador no encontrado' });
-        res.send(player);
-    } catch (error) {
-        res.status(500).send({ error: error.message });
-    }
-}
-);
+router.get('/me', auth, async (req, res) => {
+  try {
+    const player = await Player.findById(req.user);
+    if (!player) return res.status(404).json({ msg: 'Jugador no encontrado' });
+    res.json(player);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/', auth, async (req, res) => {
+  try {
+    const players = await Player.find({}, 'name email');
+    res.json(players);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
